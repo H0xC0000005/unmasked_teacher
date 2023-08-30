@@ -2,7 +2,7 @@ export MASTER_PORT=$((12000 + $RANDOM % 20000))
 export OMP_NUM_THREADS=1
 
 JOB_NAME='l16_ptk710_ftk710_ftk400_f16_res224'
-OUTPUT_DIR="$(dirname $0)/$JOB_NAME"
+OUTPUT_DIR="$(dirname "$0")/$JOB_NAME"
 LOG_DIR="./logs/${JOB_NAME}"
 PREFIX='your_data_path'
 DATA_PATH='your_data_path/k400'
@@ -27,8 +27,8 @@ srun -p $PARTITION \
         --split ',' \
         --nb_classes 400 \
         --finetune ${MODEL_PATH} \
-        --log_dir ${OUTPUT_DIR} \
-        --output_dir ${OUTPUT_DIR} \
+        --log_dir "${OUTPUT_DIR}" \
+        --output_dir "${OUTPUT_DIR}" \
         --batch_size 8 \
         --num_sample 2 \
         --input_size 224 \
