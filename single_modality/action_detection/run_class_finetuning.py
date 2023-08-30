@@ -1,23 +1,22 @@
 import argparse
 import datetime
-import numpy as np
-import time
-import torch
-import torch.backends.cudnn as cudnn
 import json
 import os
-from functools import partial
-from pathlib import Path
+import time
 from collections import OrderedDict
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.backends.cudnn as cudnn
 from timm.models import create_model
-from optim_factory import create_optimizer, get_parameter_groups, LayerDecayValueAssigner
+
+import utils
+from data.transforms import build_transforms
 from datasets import build_ava_dataset, BatchCollator
 from engine_for_finetuning import train_one_epoch, validation_one_epoch
+from optim_factory import create_optimizer, LayerDecayValueAssigner
 from utils import NativeScalerWithGradNormCount as NativeScaler
-from utils import multiple_samples_collate
-import utils
-import modeling_finetune
-from data.transforms import build_transforms
 
 
 def get_args():
@@ -143,22 +142,12 @@ def get_args():
     parser.add_argument('--dist_url', default='env://',
                         help='url used to set up distributed training')
 
-    parser.add_argument('--enable_deepspeed', action='store_true', default=False)
     parser.add_argument('--close_amp', action='store_true', default=False)
 
     known_args, _ = parser.parse_known_args()
 
-    if known_args.enable_deepspeed:
-        try:
-            import deepspeed
-            from deepspeed import DeepSpeedConfig
-            parser = deepspeed.add_config_arguments(parser)
-            ds_init = deepspeed.initialize
-        except:
-            print("Please 'pip install deepspeed'")
-            exit(0)
-    else:
-        ds_init = None
+
+    ds_init = None
 
     return parser.parse_args(), ds_init
 
@@ -199,7 +188,7 @@ def main(args, ds_init):
                   'equal num of samples per-process.')
         sampler_val = torch.utils.data.DistributedSampler(
             dataset_val, num_replicas=num_tasks, rank=global_rank, shuffle=False)
-    else:  
+    else:
         sampler_val = torch.utils.data.SequentialSampler(dataset_val)
 
     if global_rank == 0 and args.log_dir is not None:
@@ -354,28 +343,15 @@ def main(args, ds_init):
     skip_weight_decay_list = model.no_weight_decay()
     print("Skip weight decay list: ", skip_weight_decay_list)
 
-    if args.enable_deepspeed:
-        loss_scaler = None
-        optimizer_params = get_parameter_groups(
-            model, args.weight_decay, skip_weight_decay_list,
-            assigner.get_layer_id if assigner is not None else None,
-            assigner.get_scale if assigner is not None else None)
-        model, optimizer, _, _ = ds_init(
-            args=args, model=model, model_parameters=optimizer_params, dist_init_required=not args.distributed,
-        )
+    if args.distributed:
+        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu], find_unused_parameters=False)
+        model_without_ddp = model.module
 
-        print("model.gradient_accumulation_steps() = %d" % model.gradient_accumulation_steps())
-        assert model.gradient_accumulation_steps() == args.update_freq
-    else:
-        if args.distributed:
-            model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu], find_unused_parameters=False)
-            model_without_ddp = model.module
-
-        optimizer = create_optimizer(
-            args, model_without_ddp, skip_list=skip_weight_decay_list,
-            get_num_layer=assigner.get_layer_id if assigner is not None else None,
-            get_layer_scale=assigner.get_scale if assigner is not None else None)
-        loss_scaler = NativeScaler()
+    optimizer = create_optimizer(
+        args, model_without_ddp, skip_list=skip_weight_decay_list,
+        get_num_layer=assigner.get_layer_id if assigner is not None else None,
+        get_layer_scale=assigner.get_scale if assigner is not None else None)
+    loss_scaler = NativeScaler()
 
     print("Use step level LR scheduler!")
     lr_schedule_values = utils.cosine_scheduler(
@@ -435,7 +411,7 @@ def main(args, ds_init):
         if data_loader_val is not None and (
                 (epoch + 1) % args.val_freq == 0 or epoch + 1 == args.epochs):
             validation_one_epoch(
-                data_loader_val, model, device, args.output_dir, epoch, log_writer, 
+                data_loader_val, model, device, args.output_dir, epoch, log_writer,
                 fp16=fp16
         )
 

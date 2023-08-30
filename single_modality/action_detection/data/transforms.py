@@ -1,8 +1,9 @@
 
-from alphaction.dataset.transforms import video_transforms as T
 from dataclasses import dataclass
-import numpy as np
+
 import cv2
+
+from single_modality.action_detection.alphaction.dataset.transforms import video_transforms as video_trans
 
 cv2.setNumThreads(0)
 
@@ -50,25 +51,25 @@ def build_transforms(cfg=TransformsCfg(), is_train=True, sparse=False):
     print(f"Frame span: {frame_span}")
 
     if color_jitter:
-        color_transform = T.ColorJitter(
+        color_transform = video_trans.ColorJitter(
             cfg.HUE_JITTER, cfg.SAT_JITTER, cfg.VAL_JITTER
         )
     else:
-        color_transform = T.Identity()
+        color_transform = video_trans.Identity()
 
     to_bgr = cfg.TO_BGR
-    normalize_transform = T.Normalize(
+    normalize_transform = video_trans.Normalize(
         mean=cfg.PIXEL_MEAN, std=cfg.PIXEL_STD, to_bgr=to_bgr
     )
 
-    transform = T.Compose(
+    transform = video_trans.Compose(
         [
-            T.TemporalCrop(frame_num, sample_rate, sparse=sparse),
-            T.Resize(min_size, max_size),
-            T.RandomClip(is_train),
+            video_trans.TemporalCrop(frame_num, sample_rate, sparse=sparse),
+            video_trans.Resize(min_size, max_size),
+            video_trans.RandomClip(is_train),
             color_transform,
-            T.RandomHorizontalFlip(flip_prob),
-            T.ToTensor(),
+            video_trans.RandomHorizontalFlip(flip_prob),
+            video_trans.ToTensor(),
             normalize_transform,
         ]
     )

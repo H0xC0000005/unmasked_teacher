@@ -1,8 +1,6 @@
-import os
-from data.ava import AVAVideoDataset
-from data.transforms import TransformsCfg
 import alphaction.config.paths_catalog as paths_catalog
 from alphaction.dataset.collate_batch import batch_different_videos
+from data.ava import AVAVideoDataset
 
 
 class BatchCollator(object):

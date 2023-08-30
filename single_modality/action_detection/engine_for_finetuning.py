@@ -1,18 +1,17 @@
-import os
-import numpy as np
-import math
-import sys
-import time
 import datetime
 import logging
+import math
+import os
+import sys
+import time
 from typing import Iterable, Optional
+
 import torch
 import torch.nn as nn
-
 import torch.nn.functional as F
-
 from timm.data import Mixup
-from timm.utils import accuracy, ModelEma
+from timm.utils import ModelEma
+
 import utils
 from alphaction.modeling.utils import cat
 from alphaction.structures.bounding_box import BoxList
