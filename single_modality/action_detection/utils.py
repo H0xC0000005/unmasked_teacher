@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import torch
 import torch.distributed as dist
-from torch._six import inf
+# from torch._six import inf
 import random
 
 from tensorboardX import SummaryWriter
@@ -290,7 +290,7 @@ def init_distributed_mode(args):
     setup_for_distributed(args.rank == 0)
 
 
-def load_state_dict(model, state_dict, prefix='', ignore_missing="relative_position_index"):
+def load_state_dict(model: torch.nn.Module, state_dict, prefix='', ignore_missing="relative_position_index"):
     missing_keys = []
     unexpected_keys = []
     error_msgs = []
@@ -299,7 +299,7 @@ def load_state_dict(model, state_dict, prefix='', ignore_missing="relative_posit
     if metadata is not None:
         state_dict._metadata = metadata
 
-    def load(module, prefix=''):
+    def load(module: torch.nn.Module, prefix=''):
         local_metadata = {} if metadata is None else metadata.get(
             prefix[:-1], {})
         module._load_from_state_dict(
@@ -375,7 +375,7 @@ def get_grad_norm_(parameters, norm_type: float = 2.0) -> torch.Tensor:
     if len(parameters) == 0:
         return torch.tensor(0.)
     device = parameters[0].grad.device
-    if norm_type == inf:
+    if norm_type >= 1e6:
         total_norm = max(p.grad.detach().abs().max().to(device) for p in parameters)
     else:
         total_norm = torch.norm(torch.stack([torch.norm(p.grad.detach(), norm_type).to(device) for p in parameters]), norm_type)
