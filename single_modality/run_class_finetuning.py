@@ -479,6 +479,7 @@ def main(args, ds_init):
     print("Skip weight decay list: ", skip_weight_decay_list)
 
     if args.enable_deepspeed:
+        raise NotImplementedError
         loss_scaler = None
         optimizer_params = get_parameter_groups(
             model, args.weight_decay, skip_weight_decay_list,
@@ -491,9 +492,11 @@ def main(args, ds_init):
         print("model.gradient_accumulation_steps() = %d" % model.gradient_accumulation_steps())
         assert model.gradient_accumulation_steps() == args.update_freq
     else:
-        if args.distributed:
-            model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu], find_unused_parameters=True)
-            model_without_ddp = model.module
+        """ distributed settings
+        """
+        # if args.distributed:
+        #     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu], find_unused_parameters=True)
+        #     model_without_ddp = model.module
 
         optimizer = create_optimizer(
             args, model_without_ddp, skip_list=skip_weight_decay_list,

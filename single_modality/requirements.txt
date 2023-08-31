@@ -13,7 +13,7 @@ scipy>=1.7.3
 setuptools>=63.4.1
 # skimage>=0.0
 tensorboardX>=2.5.1
-timm>=0.4.12
+timm==0.4.12
 torch>=1.12.1+cu113
 torchvision>=0.13.1+cu113
 tqdm>=4.64.1

@@ -51,5 +51,4 @@ python run_class_finetuning.py \
         --test_num_segment 4 \
         --test_num_crop 1 \
         --dist_eval \
-        --enable_deepspeed \
         --test_best
