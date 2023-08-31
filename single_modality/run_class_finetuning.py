@@ -1,5 +1,7 @@
 import argparse
 import datetime
+import sys
+
 import numpy as np
 import time
 import torch
@@ -531,6 +533,7 @@ def main(args, ds_init):
 
     if args.eval:
         print(f">>> eval specified in arg. evaluating")
+        sys.exit(1)
         time.sleep(1)
         preds_file = os.path.join(args.output_dir, str(global_rank) + '.txt')
         test_stats = final_test(data_loader_test, model, device, preds_file)
