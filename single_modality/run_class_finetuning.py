@@ -440,6 +440,9 @@ def main(args, ds_init):
 
     print(f">>>>> sucessfully loaded state dict into model!")
 
+    import safetensors
+    safetensors.torch.save_model(model, "model_test")
+
     sys.exit(0)
     model.to(device)
 
