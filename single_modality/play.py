@@ -6,7 +6,7 @@ import timm.models.vision_transformer
 import torch
 from timm.models import create_model
 # from timm import create_model
-from single_modality.action_detection import utils
+from action_detection import utils
 
 
 def get_args():
