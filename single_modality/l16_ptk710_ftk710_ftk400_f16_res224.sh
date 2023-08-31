@@ -4,10 +4,10 @@ export OMP_NUM_THREADS=1
 JOB_NAME='l16_ptk710_ftk710_ftk400_f16_res224'
 OUTPUT_DIR="$(dirname "$0")/$JOB_NAME"
 LOG_DIR="./logs/${JOB_NAME}"
-PREFIX='your_data_path'
-DATA_PATH='your_data_path/k400'
-# MODEL_PATH='your_model_path/l16_ptk710_ftk710_f8_res224.pth'
-MODEL_PATH="https://pjlab-gvm-data.oss-cn-shanghai.aliyuncs.com/umt/single_modality/l16_ptk710_ftk710_ftk400_f16_res224.pth"
+PREFIX='~/data'
+DATA_PATH='~/data/kinetics400'
+MODEL_PATH='~/models/l16_ptk710_ftk710_f8_res224.pth'
+# MODEL_PATH="https://pjlab-gvm-data.oss-cn-shanghai.aliyuncs.com/umt/single_modality/l16_ptk710_ftk710_ftk400_f16_res224.pth"
 
 PARTITION='video'
 GPUS=16
@@ -20,7 +20,7 @@ CPUS_PER_TASK=14
 #        --ntasks=${GPUS} \
 #        --ntasks-per-node=${GPUS_PER_NODE} \
 #        --cpus-per-task=${CPUS_PER_TASK} \
-python run_class_finetuning.py \
+python3 run_class_finetuning.py \
         --model vit_large_patch16_224 \
         --data_path ${DATA_PATH} \
         --prefix ${PREFIX} \
