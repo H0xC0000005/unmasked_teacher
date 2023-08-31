@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/single_modality/exp/model/l16_ptk710_ftk710_ftk400_f16_res224.pth
