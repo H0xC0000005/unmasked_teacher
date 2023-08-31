@@ -208,7 +208,7 @@ def get_args():
 
 if __name__ == '__main__':
     print(f"in main: >>")
-    args = get_args()
+    args, _ = get_args()
     print(args)
     print(type(args))
     try:
