@@ -476,7 +476,7 @@ def main(args, ds_init):
         print("Assigned values = %s" % str(assigner.values))
 
     skip_weight_decay_list = model.no_weight_decay()
-    print("Skip weight decay list: ", skip_weight_decay_list)
+    print("Skip weight decay list: ", type(skip_weight_decay_list))
 
     if args.enable_deepspeed:
         raise NotImplementedError
@@ -534,7 +534,9 @@ def main(args, ds_init):
         time.sleep(1)
         preds_file = os.path.join(args.output_dir, str(global_rank) + '.txt')
         test_stats = final_test(data_loader_test, model, device, preds_file)
-        torch.distributed.barrier()
+        print(f"obtained test stats: {test_stats} \n with type {type(test_stats)}")
+        # TODO: distributed work. This is susceptible(?)
+        # torch.distributed.barrier()
         if global_rank == 0:
             print("Start merging results...")
             final_top1, final_top5 = merge(args.output_dir, num_tasks)
