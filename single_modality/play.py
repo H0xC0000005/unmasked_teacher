@@ -153,7 +153,8 @@ if __name__ == '__main__':
     if args.output_dir:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     # checkpoint = torch.load(args.finetune, map_location='cpu')
-    checkpoint: OrderedDict = torch.load("./exp/model/l16_ptk710_ftk710_ftk400_f16_res224.pth", map_location='cpu')
+    """https://pjlab-gvm-data.oss-cn-shanghai.aliyuncs.com/umt/single_modality/l16_ptk710_ftk710_ftk400_f16_res224.pth"""
+    # checkpoint: OrderedDict = torch.load("./exp/model/l16_ptk710_ftk710_ftk400_f16_res224.pth", map_location='cpu')
     # print(checkpoint.keys())
     # print(checkpoint)
     # for key in checkpoint.keys():
