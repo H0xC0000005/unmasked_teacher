@@ -191,6 +191,7 @@ def final_test(data_loader, model, device, file):
     for batch in metric_logger.log_every(data_loader, 10, header):
         print(f">>> testing batch {batch}. sleeping for a while")
         time.sleep(1)
+        sys.exit(1)
         videos = batch[0]
         target = batch[1]
         ids = batch[2]
