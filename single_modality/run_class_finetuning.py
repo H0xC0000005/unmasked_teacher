@@ -303,17 +303,17 @@ def main(args: argparse.Namespace, ds_init):
     else:
         data_loader_val = None
 
-    if dataset_test is not None:
-        data_loader_test = torch.utils.data.DataLoader(
-            dataset_test, sampler=sampler_test,
-            batch_size=args.batch_size,
-            num_workers=args.num_workers,
-            pin_memory=args.pin_mem,
-            drop_last=False,
-            persistent_workers=True
-        )
-    else:
-        data_loader_test = None
+    # if dataset_test is not None:
+    #     data_loader_test = torch.utils.data.DataLoader(
+    #         dataset_test, sampler=sampler_test,
+    #         batch_size=args.batch_size,
+    #         num_workers=args.num_workers,
+    #         pin_memory=args.pin_mem,
+    #         drop_last=False,
+    #         persistent_workers=True
+    #     )
+    # else:
+    #     data_loader_test = None
 
     mixup_fn = None
     mixup_active = args.mixup > 0 or args.cutmix > 0. or args.cutmix_minmax is not None
