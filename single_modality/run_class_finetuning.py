@@ -150,7 +150,8 @@ def get_args():
     parser.add_argument('--use_cls', action='store_false', dest='use_mean_pooling')
 
     # Dataset parameters
-    parser.add_argument('--prefix', default='', type=str, help='prefix for data')
+    ## previous default ''
+    parser.add_argument('--prefix', default='/home/pzzhao/data', type=str, help='prefix for data')
     ## previous default ' '
     parser.add_argument('--split', default=',', type=str, help='split for metadata')
     parser.add_argument('--data_path', default='/home/pzzhao/data/kinetics400', type=str,
@@ -217,7 +218,6 @@ def get_args():
     parser.add_argument('--enable_deepspeed', action='store_true', default=False)
 
     ### added default args for extracted .sh
-    parser.add_argument('--prefix', default='/home/pzzhao/data')
     parser.add_argument('--output_dir', default='./outputs/output')
     parser.add_argument('--log_dir', default='./outputs/log')
 
