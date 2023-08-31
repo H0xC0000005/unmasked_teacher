@@ -131,8 +131,11 @@ def get_args():
                         help='How to apply mixup/cutmix params. Per "batch", "pair", or "elem"')
 
     # Finetuning params
-    parser.add_argument('--finetune', default='', help='finetune from checkpoint')
-    parser.add_argument('--delete_head', action='store_true', help='whether delete head')
+    # TODO: suspicious path: need to find a way to configure this during actual loadout. also data_path
+    parser.add_argument('--finetune', default="/home/pzzhao/models/l16_ptk710_ftk710_f8_res224.pth",
+                        help='finetune from checkpoint')
+    ## no default for this previously but set false in script
+    parser.add_argument('--delete_head', action='store_true', help='whether delete head', default=False)
     parser.add_argument('--model_key', default='model|module', type=str)
     parser.add_argument('--model_prefix', default='', type=str)
     parser.add_argument('--init_scale', default=0.001, type=float)
@@ -146,8 +149,9 @@ def get_args():
 
     # Dataset parameters
     parser.add_argument('--prefix', default='', type=str, help='prefix for data')
-    parser.add_argument('--split', default=' ', type=str, help='split for metadata')
-    parser.add_argument('--data_path', default='you_data_path', type=str,
+    ## previous default ' '
+    parser.add_argument('--split', default=',', type=str, help='split for metadata')
+    parser.add_argument('--data_path', default='/home/pzzhao/data/kinetics400', type=str,
                         help='dataset path')
     parser.add_argument('--eval_data_path', default=None, type=str,
                         help='dataset path for evaluation')
@@ -159,7 +163,8 @@ def get_args():
     parser.add_argument('--num_segments', type=int, default=1)
     parser.add_argument('--num_frames', type=int, default=16)
     parser.add_argument('--sampling_rate', type=int, default=4)
-    parser.add_argument('--data_set', default='Kinetics', choices=[
+    ## previous default "Kinetics"
+    parser.add_argument('--data_set', default='Kinetics_sparse', choices=[
         'Kinetics', 'Kinetics_sparse',
         'SSV2', 'UCF101', 'HMDB51', 'image_folder',
         'mitv1_sparse'
@@ -173,21 +178,25 @@ def get_args():
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--resume', default='',
                         help='resume from checkpoint')
+    ## previous no default
     parser.add_argument('--auto_resume', action='store_true')
     parser.add_argument('--no_auto_resume', action='store_false', dest='auto_resume')
     parser.set_defaults(auto_resume=True)
 
+    ## previous no default
     parser.add_argument('--save_ckpt', action='store_true')
     parser.add_argument('--no_save_ckpt', action='store_false', dest='save_ckpt')
     parser.set_defaults(save_ckpt=True)
 
     parser.add_argument('--start_epoch', default=0, type=int, metavar='N',
                         help='start epoch')
+    ## previous no default
     parser.add_argument('--test_best', action='store_true',
                         help='Whether test the best model')
+    ## previous no default
     parser.add_argument('--eval', action='store_true',
                         help='Perform evaluation only')
-    parser.add_argument('--dist_eval', action='store_true', default=False,
+    parser.add_argument('--dist_eval', action='store_true',
                         help='Enabling distributed evaluation')
     parser.add_argument('--num_workers', default=10, type=int)
     parser.add_argument('--pin_mem', action='store_true',

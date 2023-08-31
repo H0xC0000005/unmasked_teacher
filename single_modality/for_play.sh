@@ -1,7 +1,7 @@
 export MASTER_PORT=$((12000 + $RANDOM % 20000))
 export OMP_NUM_THREADS=1
 
-JOB_NAME='l16_ptk710_ftk710_ftk400_f16_res224'
+JOB_NAME='test_output'
 OUTPUT_DIR="$(dirname "$0")/$JOB_NAME"
 LOG_DIR="./logs/${JOB_NAME}"
 PREFIX="$HOME/data"
