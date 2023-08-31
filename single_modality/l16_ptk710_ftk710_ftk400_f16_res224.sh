@@ -20,7 +20,7 @@ CPUS_PER_TASK=1
 #        --ntasks=${GPUS} \
 #        --ntasks-per-node=${GPUS_PER_NODE} \
 #        --cpus-per-task=${CPUS_PER_TASK} \
-python run_class_finetuning.py \
+python3 run_class_finetuning.py \
         --model vit_large_patch16_224 \
         --data_path ${DATA_PATH} \
         --prefix ${PREFIX} \
