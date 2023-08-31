@@ -15,6 +15,7 @@ def get_args():
     Returns:
 
     """
+    print(f">> parsing args.")
     parser = argparse.ArgumentParser('VideoMAE fine-tuning and evaluation script for video action detection',
                                      add_help=False)
     parser.add_argument('--batch_size', default=8, type=int)  #
