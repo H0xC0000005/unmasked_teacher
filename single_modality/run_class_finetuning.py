@@ -172,9 +172,12 @@ def get_args():
         'SSV2', 'UCF101', 'HMDB51', 'image_folder',
         'mitv1_sparse'
     ], type=str, help='dataset')
-    parser.add_argument('--output_dir', default='',
+
+    ## prev default ''
+    parser.add_argument('--output_dir', default='./outputs/output',
                         help='path where to save, empty for no saving')
-    parser.add_argument('--log_dir', default=None,
+    ## prev default None
+    parser.add_argument('--log_dir', default='./outputs/log',
                         help='path where to tensorboard log')
     parser.add_argument('--device', default='cuda',
                         help='device to use for training / testing')
@@ -218,8 +221,7 @@ def get_args():
     parser.add_argument('--enable_deepspeed', action='store_true', default=False)
 
     ### added default args for extracted .sh
-    parser.add_argument('--output_dir', default='./outputs/output')
-    parser.add_argument('--log_dir', default='./outputs/log')
+
 
     known_args, _ = parser.parse_known_args()
 
