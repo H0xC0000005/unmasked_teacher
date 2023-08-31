@@ -166,17 +166,35 @@ if __name__ == '__main__':
     #     print(key, type(val))
     #     print(val.shape)
     # print(len(checkpoint))
-    model: timm.models.vision_transformer.VisionTransformer = create_model(
-        args.model,  # 'vit_base_patch16_224'
+    # model: timm.models.vision_transformer.VisionTransformer = create_model(
+    #     args.model,  # 'vit_base_patch16_224'
+    #     pretrained=False,
+    #     num_classes=args.nb_classes,
+    #     all_frames=args.num_frames * args.num_segments,
+    #     tubelet_size=args.tubelet_size,
+    #     drop_rate=args.drop,
+    #     drop_path_rate=args.drop_path,
+    #     attn_drop_rate=args.attn_drop_rate,
+    #     drop_block_rate=None,
+    #     use_checkpoint=args.use_checkpoint,
+    #     use_mean_pooling=args.use_mean_pooling,
+    #     init_scale=args.init_scale,
+    # )
+
+    model = create_model(
+        args.model,
         pretrained=False,
         num_classes=args.nb_classes,
         all_frames=args.num_frames * args.num_segments,
         tubelet_size=args.tubelet_size,
+        use_learnable_pos_emb=args.use_learnable_pos_emb,
+        fc_drop_rate=args.fc_drop_rate,
         drop_rate=args.drop,
         drop_path_rate=args.drop_path,
         attn_drop_rate=args.attn_drop_rate,
         drop_block_rate=None,
         use_checkpoint=args.use_checkpoint,
+        checkpoint_num=args.checkpoint_num,
         use_mean_pooling=args.use_mean_pooling,
         init_scale=args.init_scale,
     )
@@ -248,6 +266,7 @@ if __name__ == '__main__':
 
         utils.load_state_dict(model, checkpoint_model, prefix=args.model_prefix)
     print(model)
+    print(f">>>>> sucessfully loaded checkpoint to model")
 
 
     # model: timm.models.vision_transformer.VisionTransformer = create_model(
@@ -265,7 +284,7 @@ if __name__ == '__main__':
     #     # init_scale=args.init_scale,
     # )
 
-    print(model)
+
     print(type(model))
     print(isinstance(model, torch.nn.Module))
     model.load_state_dict(checkpoint)

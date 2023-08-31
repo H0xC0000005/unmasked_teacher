@@ -180,8 +180,8 @@ def validation_one_epoch(data_loader, model, device, fp32=False):
 def final_test(data_loader, model, device, file):
     print(f">>> carry out final test.")
     criterion = torch.nn.CrossEntropyLoss()
-
     metric_logger = utils.MetricLogger(delimiter="  ")
+    sys.exit(1)
     header = 'Test:'
 
     # switch to evaluation mode
@@ -191,7 +191,7 @@ def final_test(data_loader, model, device, file):
     for batch in metric_logger.log_every(data_loader, 10, header):
         print(f">>> testing batch {batch}. sleeping for a while")
         time.sleep(1)
-        sys.exit(1)
+        # sys.exit(1)
         videos = batch[0]
         target = batch[1]
         ids = batch[2]
