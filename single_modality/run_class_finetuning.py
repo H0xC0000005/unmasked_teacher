@@ -533,10 +533,10 @@ def main(args, ds_init):
 
     if args.eval:
         print(f">>> eval specified in arg. evaluating")
-        sys.exit(1)
         time.sleep(1)
         preds_file = os.path.join(args.output_dir, str(global_rank) + '.txt')
         test_stats = final_test(data_loader_test, model, device, preds_file)
+        sys.exit(1)
         print(f"obtained test stats: {test_stats} \n with type {type(test_stats)}")
         # TODO: distributed work. This is susceptible(?)
         # torch.distributed.barrier()
