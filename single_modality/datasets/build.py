@@ -15,7 +15,7 @@ class DataAugmentationForVideoMAE(object):
         normalize = GroupNormalize(self.input_mean, self.input_std)
         self.train_augmentation = GroupMultiScaleCrop(args.input_size, [1, .875, .75, .66])
         if args.color_jitter > 0:
-            self.transform = transforms.Compose([                            
+            self.transform = transforms.Compose([
                 self.train_augmentation,
                 GroupColorJitter(args.color_jitter),
                 GroupRandomHorizontalFlip(flip=args.flip),
@@ -24,7 +24,7 @@ class DataAugmentationForVideoMAE(object):
                 normalize,
             ])
         else:
-            self.transform = transforms.Compose([                            
+            self.transform = transforms.Compose([
                 self.train_augmentation,
                 GroupRandomHorizontalFlip(flip=args.flip),
                 Stack(roll=False),
@@ -83,21 +83,19 @@ def build_pretraining_dataset(args):
 def build_dataset(is_train, test_mode, args):
     print(f'Use Dataset: {args.data_set}')
     if args.data_set in [
-            'Kinetics',
-            'Kinetics_sparse',
-            'mitv1_sparse'
-        ]:
-        mode = None
-        anno_path = None
+        'Kinetics',
+        'Kinetics_sparse',
+        'mitv1_sparse'
+    ]:
         if is_train is True:
             mode = 'train'
             anno_path = os.path.join(args.data_path, 'train.csv')
         elif test_mode is True:
             mode = 'test'
-            anno_path = os.path.join(args.data_path, 'test.csv') 
-        else:  
+            anno_path = os.path.join(args.data_path, 'test.csv')
+        else:
             mode = 'validation'
-            anno_path = os.path.join(args.data_path, 'val.csv') 
+            anno_path = os.path.join(args.data_path, 'val.csv')
 
         if 'sparse' in args.data_set:
             func = VideoClsDataset_sparse
@@ -121,21 +119,19 @@ def build_dataset(is_train, test_mode, args):
             new_height=256,
             new_width=320,
             args=args)
-        
+
         nb_classes = args.nb_classes
-    
+
     elif args.data_set == 'SSV2':
-        mode = None
-        anno_path = None
         if is_train is True:
             mode = 'train'
             anno_path = os.path.join(args.data_path, 'train.csv')
         elif test_mode is True:
             mode = 'test'
-            anno_path = os.path.join(args.data_path, 'test.csv') 
-        else:  
+            anno_path = os.path.join(args.data_path, 'test.csv')
+        else:
             mode = 'validation'
-            anno_path = os.path.join(args.data_path, 'val.csv') 
+            anno_path = os.path.join(args.data_path, 'val.csv')
 
         if args.use_decord:
             func = SSVideoClsDataset
@@ -168,10 +164,10 @@ def build_dataset(is_train, test_mode, args):
             anno_path = os.path.join(args.data_path, 'train.csv')
         elif test_mode is True:
             mode = 'test'
-            anno_path = os.path.join(args.data_path, 'test.csv') 
-        else:  
+            anno_path = os.path.join(args.data_path, 'test.csv')
+        else:
             mode = 'validation'
-            anno_path = os.path.join(args.data_path, 'val.csv') 
+            anno_path = os.path.join(args.data_path, 'val.csv')
 
         dataset = VideoClsDataset(
             anno_path=anno_path,
@@ -191,19 +187,17 @@ def build_dataset(is_train, test_mode, args):
             new_width=320,
             args=args)
         nb_classes = 101
-    
+
     elif args.data_set == 'HMDB51':
-        mode = None
-        anno_path = None
         if is_train is True:
             mode = 'train'
             anno_path = os.path.join(args.data_path, 'train.csv')
         elif test_mode is True:
             mode = 'test'
-            anno_path = os.path.join(args.data_path, 'test.csv') 
-        else:  
+            anno_path = os.path.join(args.data_path, 'test.csv')
+        else:
             mode = 'validation'
-            anno_path = os.path.join(args.data_path, 'val.csv') 
+            anno_path = os.path.join(args.data_path, 'val.csv')
 
         dataset = VideoClsDataset(
             anno_path=anno_path,
