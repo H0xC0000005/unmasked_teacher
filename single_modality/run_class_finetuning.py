@@ -339,6 +339,7 @@ def main(args, ds_init):
         init_scale=args.init_scale,
     )
     print(f">>>> model created: {type(model)}")
+    print(f"model is a subtype of torch.nn.Module: {isinstance(model, torch.nn.Module)}")
 
     patch_size = model.patch_embed.patch_size
     print("Patch size = %s" % str(patch_size))
@@ -439,6 +440,7 @@ def main(args, ds_init):
 
     print(f">>>>> sucessfully loaded state dict into model!")
 
+    sys.exit(0)
     model.to(device)
 
     model_ema = None
