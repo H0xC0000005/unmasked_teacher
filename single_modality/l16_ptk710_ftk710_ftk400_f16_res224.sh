@@ -31,6 +31,7 @@ python3 run_class_finetuning.py \
         --log_dir ${OUTPUT_DIR} \
         --output_dir ${OUTPUT_DIR} \
         --batch_size 8 \
+
         --num_sample 2 \
         --input_size 224 \
         --short_side_size 224 \

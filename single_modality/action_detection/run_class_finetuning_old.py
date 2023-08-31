@@ -22,16 +22,16 @@ from utils import NativeScalerWithGradNormCount as NativeScaler
 def get_args():
     parser = argparse.ArgumentParser('VideoMAE fine-tuning and evaluation script for video action detection',
                                      add_help=False)
-    parser.add_argument('--batch_size', default=8, type=int)  #
-    parser.add_argument('--epochs', default=5, type=int)  #
+    parser.add_argument('--batch_size', default=64, type=int)  #
+    parser.add_argument('--epochs', default=30, type=int)  #
     parser.add_argument('--update_freq', default=1, type=int)
     parser.add_argument('--save_ckpt_freq', default=100, type=int)  #
     parser.add_argument('--val_freq', default=2, type=int)  #
 
     # Model parameters
-    parser.add_argument('--model', default='vit_large_patch16_224', type=str, metavar='MODEL',
+    parser.add_argument('--model', default='vit_base_patch16_224', type=str, metavar='MODEL',
                         help='Name of model to train')
-    parser.add_argument('--tubelet_size', type=int, default=1)
+    parser.add_argument('--tubelet_size', type=int, default=2)
     parser.add_argument('--input_size', default=224, type=int,
                         help='videos input size')
 
@@ -39,7 +39,7 @@ def get_args():
                         help='Dropout rate (default: 0.)')
     parser.add_argument('--attn_drop_rate', type=float, default=0.0, metavar='PCT',
                         help='Attention dropout rate (default: 0.)')
-    parser.add_argument('--drop_path', type=float, default=0.2, metavar='PCT',
+    parser.add_argument('--drop_path', type=float, default=0.1, metavar='PCT',
                         help='Drop path rate (default: 0.1)')
 
     parser.add_argument('--disable_eval_during_finetuning', action='store_true', default=False)
@@ -52,7 +52,7 @@ def get_args():
                         help='Optimizer (default: "adamw"')
     parser.add_argument('--opt_eps', default=1e-8, type=float, metavar='EPSILON',
                         help='Optimizer Epsilon (default: 1e-8)')
-    parser.add_argument('--opt_betas', default=[0.9,0.999], type=float, nargs='+', metavar='BETA',
+    parser.add_argument('--opt_betas', default=None, type=float, nargs='+', metavar='BETA',
                         help='Optimizer Betas (default: None, use opt default)')
     parser.add_argument('--clip_grad', type=float, default=None, metavar='NORM',
                         help='Clip gradient norm (default: None, no clipping)')
@@ -64,16 +64,16 @@ def get_args():
         weight decay. We use a cosine schedule for WD and using a larger decay by
         the end of training improves performance for ViTs.""")
 
-    parser.add_argument('--lr', type=float, default=1e-05, metavar='LR',
+    parser.add_argument('--lr', type=float, default=1e-3, metavar='LR',
                         help='learning rate (default: 1e-3)')
-    parser.add_argument('--layer_decay', type=float, default=0.85)
+    parser.add_argument('--layer_decay', type=float, default=0.75)
 
     parser.add_argument('--warmup_lr', type=float, default=1e-6, metavar='LR',
                         help='warmup learning rate (default: 1e-6)')
     parser.add_argument('--min_lr', type=float, default=1e-6, metavar='LR',
                         help='lower lr bound for cyclic schedulers that hit 0 (1e-5)')
 
-    parser.add_argument('--warmup_epochs', type=int, default=1, metavar='N',  #
+    parser.add_argument('--warmup_epochs', type=int, default=5, metavar='N',  #
                         help='epochs to warmup LR, if scheduler supports')
     parser.add_argument('--warmup_steps', type=int, default=-1, metavar='N',
                         help='num of steps to warmup LR, will overload warmup_epochs if set > 0')
@@ -144,11 +144,6 @@ def get_args():
 
     parser.add_argument('--close_amp', action='store_true', default=False)
 
-    """
-    hardcoded parameters (default) for script l16_ptk710_ftk710_ftk400_f16_res224.sh
-    """
-    # parser.add_argument('--num_sample')
-
     known_args, _ = parser.parse_known_args()
 
 
@@ -157,16 +152,13 @@ def get_args():
     return parser.parse_args(), ds_init
 
 
-def main(args: argparse.Namespace, ds_init):
+def main(args, ds_init):
     utils.init_distributed_mode(args)
 
     if ds_init is not None:
         utils.create_ds_config(args)
 
     print(args)
-    args_dict = vars(args)
-    for k, v in args_dict.items():
-        print(k, v)
 
     device = torch.device(args.device)
 
