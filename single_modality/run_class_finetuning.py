@@ -344,6 +344,8 @@ def main(args: argparse.Namespace, ds_init):
             prob=args.mixup_prob, switch_prob=args.mixup_switch_prob, mode=args.mixup_mode,
             label_smoothing=args.smoothing, num_classes=args.nb_classes)
 
+    print()
+    print()
     print(f">>>>>>>> before model construction: ")
     print(f"model: {args.model}")
     print(f"num classes: {args.nb_classes}")
@@ -358,6 +360,8 @@ def main(args: argparse.Namespace, ds_init):
     print(f"checkpoint_num={args.checkpoint_num}")
     print(f"use_mean_pooling={args.use_mean_pooling}")
     print(f"init_scale={args.init_scale}")
+    print()
+    print()
 
 
     model = create_model(
