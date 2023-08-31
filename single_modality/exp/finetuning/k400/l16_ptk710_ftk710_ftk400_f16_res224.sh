@@ -52,3 +52,5 @@ python run_class_finetuning.py \
         --test_num_crop 1 \
         --dist_eval \
         --test_best
+
+# TODO: add deepspeed config

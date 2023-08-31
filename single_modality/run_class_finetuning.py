@@ -450,7 +450,7 @@ def main(args, ds_init):
     model_without_ddp = model
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-    print("Model = %s" % str(model_without_ddp))
+    # print("Model = %s" % str(model_without_ddp))
     print('number of params:', n_parameters)
 
     total_batch_size = args.batch_size * args.update_freq * utils.get_world_size()
@@ -530,6 +530,7 @@ def main(args, ds_init):
         optimizer=optimizer, loss_scaler=loss_scaler, model_ema=model_ema)
 
     if args.eval:
+        print(f">>> eval specified in arg. evaluating")
         preds_file = os.path.join(args.output_dir, str(global_rank) + '.txt')
         test_stats = final_test(data_loader_test, model, device, preds_file)
         torch.distributed.barrier()
