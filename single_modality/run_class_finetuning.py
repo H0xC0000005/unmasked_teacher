@@ -25,7 +25,8 @@ from models import *
 
 
 def get_args():
-    parser = argparse.ArgumentParser('VideoMAE fine-tuning and evaluation script for video classification', add_help=False)
+    parser = argparse.ArgumentParser('VideoMAE fine-tuning and evaluation script for video classification',
+                                     add_help=False)
     parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--epochs', default=30, type=int)
     parser.add_argument('--update_freq', default=1, type=int)
@@ -102,7 +103,7 @@ def get_args():
     parser.add_argument('--short_side_size', type=int, default=224)
     parser.add_argument('--test_num_segment', type=int, default=5)
     parser.add_argument('--test_num_crop', type=int, default=3)
-    
+
     # Random Erase params
     parser.add_argument('--reprob', type=float, default=0.25, metavar='PCT',
                         help='Random erase prob (default: 0.25)')
@@ -157,10 +158,10 @@ def get_args():
     parser.add_argument('--num_frames', type=int, default=16)
     parser.add_argument('--sampling_rate', type=int, default=4)
     parser.add_argument('--data_set', default='Kinetics', choices=[
-        'Kinetics', 'Kinetics_sparse', 
+        'Kinetics', 'Kinetics_sparse',
         'SSV2', 'UCF101', 'HMDB51', 'image_folder',
         'mitv1_sparse'
-        ], type=str, help='dataset')
+    ], type=str, help='dataset')
     parser.add_argument('--output_dir', default='',
                         help='path where to save, empty for no saving')
     parser.add_argument('--log_dir', default=None,
@@ -243,7 +244,6 @@ def main(args, ds_init):
     else:
         dataset_val, _ = build_dataset(is_train=False, test_mode=False, args=args)
     dataset_test, _ = build_dataset(is_train=False, test_mode=True, args=args)
-    
 
     num_tasks = utils.get_world_size()
     global_rank = utils.get_rank()
@@ -254,8 +254,8 @@ def main(args, ds_init):
     if args.dist_eval:
         if len(dataset_val) % num_tasks != 0:
             print('Warning: Enabling distributed evaluation with an eval dataset not divisible by process number. '
-                    'This will slightly alter validation results as extra duplicate entries are added to achieve '
-                    'equal num of samples per-process.')
+                  'This will slightly alter validation results as extra duplicate entries are added to achieve '
+                  'equal num of samples per-process.')
         sampler_val = torch.utils.data.DistributedSampler(
             dataset_val, num_replicas=num_tasks, rank=global_rank, shuffle=False)
         sampler_test = torch.utils.data.DistributedSampler(
@@ -334,10 +334,12 @@ def main(args, ds_init):
         use_mean_pooling=args.use_mean_pooling,
         init_scale=args.init_scale,
     )
+    print(f">>>> model created: {model}")
 
     patch_size = model.patch_embed.patch_size
     print("Patch size = %s" % str(patch_size))
-    args.window_size = (args.num_frames // args.tubelet_size, args.input_size // patch_size[0], args.input_size // patch_size[1])
+    args.window_size = (
+    args.num_frames // args.tubelet_size, args.input_size // patch_size[0], args.input_size // patch_size[1])
     args.patch_size = patch_size
 
     if args.finetune:
@@ -374,7 +376,7 @@ def main(args, ds_init):
                         label_map = json.load(f)
                     checkpoint_model['head.weight'] = checkpoint_model['head.weight'][label_map]
                     checkpoint_model['head.bias'] = checkpoint_model['head.bias'][label_map]
-                    
+
         all_keys = list(checkpoint_model.keys())
         new_dict = OrderedDict()
         for key in all_keys:
@@ -389,18 +391,18 @@ def main(args, ds_init):
         # interpolate position embedding
         if 'pos_embed' in checkpoint_model:
             pos_embed_checkpoint = checkpoint_model['pos_embed']
-            embedding_size = pos_embed_checkpoint.shape[-1] # channel dim
-            num_patches = model.patch_embed.num_patches # 
-            num_extra_tokens = model.pos_embed.shape[-2] - num_patches # 0/1
+            embedding_size = pos_embed_checkpoint.shape[-1]  # channel dim
+            num_patches = model.patch_embed.num_patches  #
+            num_extra_tokens = model.pos_embed.shape[-2] - num_patches  # 0/1
 
             # we use 8 frames for pretraining
             orig_t_size = 8 // model.patch_embed.tubelet_size
             new_t_size = args.num_frames // model.patch_embed.tubelet_size
             # height (== width) for the checkpoint position embedding
-            orig_size = int(((pos_embed_checkpoint.shape[-2] - num_extra_tokens)//(orig_t_size)) ** 0.5)
+            orig_size = int(((pos_embed_checkpoint.shape[-2] - num_extra_tokens) // (orig_t_size)) ** 0.5)
             # height (== width) for the new position embedding
-            new_size = int((num_patches // (new_t_size) )** 0.5)
-            
+            new_size = int((num_patches // (new_t_size)) ** 0.5)
+
             if orig_t_size != new_t_size:
                 print(f"Temporal interpolate from {orig_t_size} to {new_t_size}")
                 tmp_pos_embed = pos_embed_checkpoint.view(1, orig_t_size, -1, embedding_size)
@@ -423,12 +425,14 @@ def main(args, ds_init):
                 pos_tokens = torch.nn.functional.interpolate(
                     pos_tokens, size=(new_size, new_size), mode='bicubic', align_corners=False)
                 # BT, C, H, W -> BT, H, W, C ->  B, T, H, W, C
-                pos_tokens = pos_tokens.permute(0, 2, 3, 1).reshape(-1, new_t_size, new_size, new_size, embedding_size) 
-                pos_tokens = pos_tokens.flatten(1, 3) # B, L, C
+                pos_tokens = pos_tokens.permute(0, 2, 3, 1).reshape(-1, new_t_size, new_size, new_size, embedding_size)
+                pos_tokens = pos_tokens.flatten(1, 3)  # B, L, C
                 new_pos_embed = torch.cat((extra_tokens, pos_tokens), dim=1)
                 checkpoint_model['pos_embed'] = new_pos_embed
 
         utils.load_state_dict(model, checkpoint_model, prefix=args.model_prefix)
+
+    print(f">>>>> sucessfully loaded state dict into model!")
 
     model.to(device)
 
@@ -461,7 +465,8 @@ def main(args, ds_init):
 
     num_layers = model_without_ddp.get_num_layers()
     if args.layer_decay < 1.0:
-        assigner = LayerDecayValueAssigner(list(args.layer_decay ** (num_layers + 1 - i) for i in range(num_layers + 2)))
+        assigner = LayerDecayValueAssigner(
+            list(args.layer_decay ** (num_layers + 1 - i) for i in range(num_layers + 2)))
     else:
         assigner = None
 
@@ -490,7 +495,7 @@ def main(args, ds_init):
 
         optimizer = create_optimizer(
             args, model_without_ddp, skip_list=skip_weight_decay_list,
-            get_num_layer=assigner.get_layer_id if assigner is not None else None, 
+            get_num_layer=assigner.get_layer_id if assigner is not None else None,
             get_layer_scale=assigner.get_scale if assigner is not None else None)
         loss_scaler = NativeScaler()
 
@@ -525,15 +530,15 @@ def main(args, ds_init):
         torch.distributed.barrier()
         if global_rank == 0:
             print("Start merging results...")
-            final_top1 ,final_top5 = merge(args.output_dir, num_tasks)
-            print(f"Accuracy of the network on the {len(dataset_test)} test videos: Top-1: {final_top1:.2f}%, Top-5: {final_top5:.2f}%")
+            final_top1, final_top5 = merge(args.output_dir, num_tasks)
+            print(
+                f"Accuracy of the network on the {len(dataset_test)} test videos: Top-1: {final_top1:.2f}%, Top-5: {final_top5:.2f}%")
             log_stats = {'Final top-1': final_top1,
-                        'Final Top-5': final_top5}
+                         'Final Top-5': final_top5}
             if args.output_dir and utils.is_main_process():
                 with open(os.path.join(args.output_dir, "log.txt"), mode="a", encoding="utf-8") as f:
                     f.write(json.dumps(log_stats) + "\n")
         exit(0)
-        
 
     print(f"Start training for {args.epochs} epochs")
     start_time = time.time()
@@ -561,7 +566,8 @@ def main(args, ds_init):
         if data_loader_val is not None:
             test_stats = validation_one_epoch(data_loader_val, model, device)
             timestep = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(f"[{timestep}] Accuracy of the network on the {len(dataset_val)} val videos: {test_stats['acc1']:.1f}%")
+            print(
+                f"[{timestep}] Accuracy of the network on the {len(dataset_val)} val videos: {test_stats['acc1']:.1f}%")
             if max_accuracy < test_stats["acc1"]:
                 max_accuracy = test_stats["acc1"]
                 if args.output_dir and args.save_ckpt:
@@ -598,10 +604,11 @@ def main(args, ds_init):
     torch.distributed.barrier()
     if global_rank == 0:
         print("Start merging results...")
-        final_top1 ,final_top5 = merge(args.output_dir, num_tasks)
-        print(f"Accuracy of the network on the {len(dataset_test)} test videos: Top-1: {final_top1:.2f}%, Top-5: {final_top5:.2f}%")
+        final_top1, final_top5 = merge(args.output_dir, num_tasks)
+        print(
+            f"Accuracy of the network on the {len(dataset_test)} test videos: Top-1: {final_top1:.2f}%, Top-5: {final_top5:.2f}%")
         log_stats = {'Final top-1': final_top1,
-                    'Final Top-5': final_top5}
+                     'Final Top-5': final_top5}
         if args.output_dir and utils.is_main_process():
             with open(os.path.join(args.output_dir, "log.txt"), mode="a", encoding="utf-8") as f:
                 f.write(json.dumps(log_stats) + "\n")
