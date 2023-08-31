@@ -20,15 +20,20 @@ CPUS_PER_TASK=1
 #        --ntasks=${GPUS} \
 #        --ntasks-per-node=${GPUS_PER_NODE} \
 #        --cpus-per-task=${CPUS_PER_TASK} \
-python3 play.py \
+python3 run_class_finetuning.py \
         --model vit_large_patch16_224 \
+        --data_path ${DATA_PATH} \
+        --prefix ${PREFIX} \
         --data_set 'Kinetics_sparse' \
+        --split ',' \
         --nb_classes 400 \
         --finetune ${MODEL_PATH} \
         --log_dir ${OUTPUT_DIR} \
         --output_dir ${OUTPUT_DIR} \
         --batch_size 8 \
+        --num_sample 2 \
         --input_size 224 \
+        --short_side_size 224 \
         --save_ckpt_freq 100 \
         --num_frames 16 \
         --num_workers 12 \
@@ -39,9 +44,14 @@ python3 play.py \
         --drop_path 0.2 \
         --layer_decay 0.85 \
         --use_checkpoint \
+        --checkpoint_num 16 \
         --opt adamw \
         --opt_betas 0.9 0.999 \
         --weight_decay 0.05 \
+        --test_num_segment 4 \
+        --test_num_crop 1 \
         --dist_eval \
+        --test_best \
         --eval
+
 

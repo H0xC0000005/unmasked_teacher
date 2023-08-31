@@ -210,6 +210,7 @@ if __name__ == '__main__':
     print(f"in main: >>")
     args = get_args()
     print(args)
+    print(type(args))
     try:
         print(args.pretrained_cfg)
     except Exception as e:
