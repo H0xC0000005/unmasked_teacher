@@ -344,6 +344,22 @@ def main(args: argparse.Namespace, ds_init):
             prob=args.mixup_prob, switch_prob=args.mixup_switch_prob, mode=args.mixup_mode,
             label_smoothing=args.smoothing, num_classes=args.nb_classes)
 
+    print(f">>>>>>>> before model construction: ")
+    print(f"model: {args.model}")
+    print(f"num classes: {args.nb_classes}")
+    print(f"all_frames: {args.num_frames * args.num_segments}")
+    print(f"tubelet_size {args.tubelet_size}")
+    print(f"use_learnable_pos_emb {args.use_learnable_pos_emb}")
+    print(f"fc_drop_rate {args.fc_drop_rate}")
+    print(f"drop_rate={args.drop}")
+    print(f"drop_path_rate={args.drop_path}")
+    print(f"attn_drop_rate={args.attn_drop_rate}")
+    print(f"use_checkpoint={args.use_checkpoint}")
+    print(f"checkpoint_num={args.checkpoint_num}")
+    print(f"use_mean_pooling={args.use_mean_pooling}")
+    print(f"init_scale={args.init_scale}")
+
+
     model = create_model(
         args.model,
         pretrained=False,
