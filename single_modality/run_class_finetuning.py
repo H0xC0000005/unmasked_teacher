@@ -30,7 +30,8 @@ from models import *
 def get_args():
     parser = argparse.ArgumentParser('VideoMAE fine-tuning and evaluation script for video classification',
                                      add_help=False)
-    parser.add_argument('--batch_size', default=64, type=int)
+    ## prev default 64
+    parser.add_argument('--batch_size', default=8, type=int)
     parser.add_argument('--epochs', default=30, type=int)
     parser.add_argument('--update_freq', default=1, type=int)
     parser.add_argument('--save_ckpt_freq', default=100, type=int)
@@ -214,6 +215,11 @@ def get_args():
                         help='url used to set up distributed training')
 
     parser.add_argument('--enable_deepspeed', action='store_true', default=False)
+
+    ### added default args for extracted .sh
+    parser.add_argument('--prefix', default='/home/pzzhao/data')
+    parser.add_argument('--output_dir', default='./outputs/output')
+    parser.add_argument('--log_dir', default='./outputs/log')
 
     known_args, _ = parser.parse_known_args()
 
