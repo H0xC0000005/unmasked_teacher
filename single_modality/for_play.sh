@@ -24,7 +24,7 @@ python3 play.py \
         --model vit_large_patch16_224 \
         --data_path ${DATA_PATH} \
         --prefix ${PREFIX} \
-        --data_set 'Kinetics_sparse' \
+        --data_set 'Kinetics-400' \
         --split ',' \
         --nb_classes 400 \
         --finetune ${MODEL_PATH} \
