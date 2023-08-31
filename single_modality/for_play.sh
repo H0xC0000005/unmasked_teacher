@@ -4,9 +4,9 @@ export OMP_NUM_THREADS=1
 JOB_NAME='l16_ptk710_ftk710_ftk400_f16_res224'
 OUTPUT_DIR="$(dirname "$0")/$JOB_NAME"
 LOG_DIR="./logs/${JOB_NAME}"
-PREFIX='~/data'
-DATA_PATH='~/data/kinetics400'
-MODEL_PATH='~/models/l16_ptk710_ftk710_f8_res224.pth'
+PREFIX="$HOME/data"
+DATA_PATH="$HOME/data/kinetics400"
+MODEL_PATH='/home/pzzhao/models/l16_ptk710_ftk710_f8_res224.pth'
 # MODEL_PATH="https://pjlab-gvm-data.oss-cn-shanghai.aliyuncs.com/umt/single_modality/l16_ptk710_ftk710_ftk400_f16_res224.pth"
 
 PARTITION='video'
