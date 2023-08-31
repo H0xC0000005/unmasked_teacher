@@ -283,6 +283,7 @@ def main(args, ds_init):
         collate_fn=collate_func,
         persistent_workers=True
     )
+    print(f">> sampled train dataset loader: {data_loader_train}")
 
     if dataset_val is not None:
         data_loader_val = torch.utils.data.DataLoader(
@@ -334,7 +335,7 @@ def main(args, ds_init):
         use_mean_pooling=args.use_mean_pooling,
         init_scale=args.init_scale,
     )
-    print(f">>>> model created: {model}")
+    print(f">>>> model created: {type(model)}")
 
     patch_size = model.patch_embed.patch_size
     print("Patch size = %s" % str(patch_size))
@@ -343,6 +344,7 @@ def main(args, ds_init):
     args.patch_size = patch_size
 
     if args.finetune:
+        print(f"args.finetune specified: {args.finetune}")
         if args.finetune.startswith('https'):
             checkpoint = torch.hub.load_state_dict_from_url(
                 args.finetune, map_location='cpu', check_hash=True)

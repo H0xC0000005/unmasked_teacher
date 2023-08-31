@@ -150,6 +150,10 @@ def get_args():
 if __name__ == '__main__':
     args = get_args()
     print(args)
+    try:
+        print(args.pretrained_cfg)
+    except Exception as e:
+        print(f"pretrained_cfg not in args")
     if args.output_dir:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     # checkpoint = torch.load(args.finetune, map_location='cpu')

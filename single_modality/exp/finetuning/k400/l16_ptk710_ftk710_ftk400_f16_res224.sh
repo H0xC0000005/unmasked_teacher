@@ -10,9 +10,9 @@ DATA_PATH='your_data_path/k400'
 MODEL_PATH="https://pjlab-gvm-data.oss-cn-shanghai.aliyuncs.com/umt/single_modality/l16_ptk710_ftk710_ftk400_f16_res224.pth"
 
 PARTITION='video'
-GPUS=16
-GPUS_PER_NODE=8
-CPUS_PER_TASK=14
+GPUS=1
+GPUS_PER_NODE=1
+CPUS_PER_TASK=1
 
 #srun -p $PARTITION \
 #        --job-name=${JOB_NAME} \
