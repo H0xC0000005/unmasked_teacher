@@ -243,8 +243,8 @@ def main(args: argparse.Namespace, ds_init):
     args_dict = vars(args)
     for k, v in args_dict.items():
         print(k, v)
-    with open('saved_dictionary.pkl', 'wb') as f:
-        pickle.dump(args_dict, f)
+    # with open('saved_dictionary.pkl', 'wb') as f:
+    #     pickle.dump(args_dict, f)
 
     device = torch.device(args.device)
 
