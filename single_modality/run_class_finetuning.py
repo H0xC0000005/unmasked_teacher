@@ -229,6 +229,7 @@ def main(args, ds_init):
         utils.create_ds_config(args)
 
     print(args)
+    print(type(args))
 
     device = torch.device(args.device)
 
